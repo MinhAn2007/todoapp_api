@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, TextInput, Button, StyleSheet } from 'react-native';
 
-const LoginScreen = ({ navigation }) => {
+const RegisterScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
 
-  const handleLogin = () => {
-    console.log('Đăng nhập với:', { username, password });
-  };
-
-  const navigateToRegister = () => {
-    navigation.navigate('RegisterScreen');
+  const handleRegister = () => {
+    console.log('Đăng ký với:', { username, password, email });
   };
 
   return (
@@ -28,10 +25,13 @@ const LoginScreen = ({ navigation }) => {
         onChangeText={text => setPassword(text)}
         value={password}
       />
-      <Button title="Đăng nhập" onPress={handleLogin} />
-      <TouchableOpacity onPress={navigateToRegister}>
-        <Text style={styles.registerText}>Đăng ký</Text>
-      </TouchableOpacity>
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        onChangeText={text => setEmail(text)}
+        value={email}
+      />
+      <Button title="Đăng ký" onPress={handleRegister} />
     </View>
   );
 };
@@ -51,11 +51,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingLeft: 10,
   },
-  registerText: {
-    marginTop: 10,
-    color: 'blue',
-    textDecorationLine: 'underline',
-  },
 });
 
-export default LoginScreen;
+export default RegisterScreen;
