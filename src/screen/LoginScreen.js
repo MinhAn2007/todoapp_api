@@ -6,8 +6,10 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    console.log('Đăng nhập với:', { username, password });
-  };
+    fetch('http://localhost:3000/comments')
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));  };
 
   const navigateToRegister = () => {
     navigation.navigate('RegisterScreen');
