@@ -1,15 +1,27 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, TextInput, Button, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    fetch('http://localhost:3000/comments')
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.error('Error:', error));  };
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/users');
+      const users = await response.json();
+      const user = users.find(u => u.username === username && u.password === password);
+      if (user) {
+        console.log('Đăng nhập thành công:', user);
+        alert('Đăng nhập thành công');
+        navigation.navigate('TakeNoteScreen', { userNotes: user.notes });
+      } else {
+        alert('Đăng nhập thất bại: Tài khoản không hợp lệ');
+      }
+
+    } catch (error) {
+      console.error('Lỗi:', error);
+    }
+  };
 
   const navigateToRegister = () => {
     navigation.navigate('RegisterScreen');

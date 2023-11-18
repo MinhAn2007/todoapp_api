@@ -1,19 +1,22 @@
 {
-  "posts": [
+  "users": [
     {
       "id": 1,
-      "title": "json-server",
-      "author": "typicode"
-    }
-  ],
-  "comments": [
+      "username": "user1",
+      "password": "pass1",
+      "tasks": [
+        {"id": 1, "title": "Task 1 for User 1", "completed": false},
+        {"id": 2, "title": "Task 2 for User 1", "completed": true}
+      ]
+    },
     {
-      "id": 1,
-      "body": "some comment",
-      "postId": 1
+      "id": 2,
+      "username": "user2",
+      "password": "pass2",
+      "tasks": [
+        {"id": 1, "title": "Task 1 for User 2", "completed": false},
+        {"id": 2, "title": "Task 2 for User 2", "completed": false}
+      ]
     }
-  ],
-  "profile": {
-    "name": "typicode"
-  }
+  ]
 }
