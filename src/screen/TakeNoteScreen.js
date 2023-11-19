@@ -5,23 +5,22 @@ import { useRoute } from '@react-navigation/native';
 const TakeNoteScreen = () => {
   const [userNotes, setUserNotes] = useState([]);
   const [newNote, setNewNote] = useState('');
+  const [selectedNote, setSelectedNote] = useState(null);
   const route = useRoute();
-  console.log(route.params);
+
   useEffect(() => {
     fetchUserNotes(route.params);
-    console.log('useEffect');
   }, [route.params]);
 
   const fetchUserNotes = async (userId) => {
-    console.log(userId);
     try {
       const apiUrl = `http://localhost:3000/note?user_id=${userId.id}`;
-      console.log(apiUrl);
       const response = await fetch(apiUrl);
-      
+
       if (response.ok) {
         const data = await response.json();
-        setUserNotes(data);  
+        setUserNotes(data);
+        console.log('data:', data);
       } else {
         console.error('Failed to fetch user notes. Server returned:', response.status);
       }
@@ -30,15 +29,15 @@ const TakeNoteScreen = () => {
     }
   };
 
-  const addNote = async  () => {
+  const addNote = async () => {
     if (newNote.trim() !== '') {
       const userId = route.params.id;
-      const newNoteObject = { id: Date.now().toString(), title: newNote, completed: false, userId: userId };
-  
+      const newNoteObject = { id: Date.now().toString(), title: newNote, completed: false, user_id: userId };
+
       setUserNotes((prevNotes) => [...prevNotes, newNoteObject]);
-  
-      const apiUrl = `http://localhost:3000/note`;
-  
+
+      const apiUrl = 'http://localhost:3000/note';
+
       try {
         const response = await fetch(apiUrl, {
           method: 'POST',
@@ -47,18 +46,71 @@ const TakeNoteScreen = () => {
           },
           body: JSON.stringify(newNoteObject),
         });
-  
+
         if (!response.ok) {
           console.error('Failed to add note. Server returned:', response.status);
         }
       } catch (error) {
         console.error('Error adding note:', error.message);
       }
-  
+
       setNewNote('');
     }
   };
-  
+
+  const updateNote = async () => {
+    if (selectedNote && newNote.trim() !== '') {
+      const updatedNote = { ...selectedNote, title: newNote };
+
+      setUserNotes((prevNotes) =>
+        prevNotes.map((note) => (note.id === selectedNote.id ? updatedNote : note))
+      );
+
+      const apiUrl = `http://localhost:3000/note/${selectedNote.id}`;
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedNote),
+        });
+
+        if (!response.ok) {
+          console.error('Failed to update note. Server returned:', response.status);
+        }
+      } catch (error) {
+        console.error('Error updating note:', error.message);
+      }
+
+      setSelectedNote(null);
+      setNewNote('');
+    }
+  };
+
+  const deleteNote = async (noteId) => {
+    const apiUrl = `http://localhost:3000/note/${noteId}`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setUserNotes((prevNotes) => prevNotes.filter((note) => note.id !== noteId));
+      } else {
+        console.error('Failed to delete note. Server returned:', response.status);
+      }
+    } catch (error) {
+      console.error('Error deleting note:', error.message);
+    }
+  };
+
+  const handleEdit = (note) => {
+    setSelectedNote(note);
+    setNewNote(note.title);
+  };
 
   return (
     <View style={styles.container}>
@@ -69,15 +121,17 @@ const TakeNoteScreen = () => {
           onChangeText={(text) => setNewNote(text)}
           value={newNote}
         />
-        <Button title="Thêm" onPress={addNote} />
+        <Button title={selectedNote ? 'Cập nhật' : 'Thêm'} onPress={selectedNote ? updateNote : addNote} />
       </View>
 
       <FlatList
         data={userNotes}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.noteItem}>
             <Text>{item.title}</Text>
+            <Button title="Sửa" onPress={() => handleEdit(item)} />
+            <Button title="Xóa" onPress={() => deleteNote(item.id)} />
           </View>
         )}
       />
@@ -103,6 +157,9 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   noteItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 10,
     padding: 10,
     backgroundColor: '#eee',
