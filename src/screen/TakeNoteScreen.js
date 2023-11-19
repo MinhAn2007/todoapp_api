@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, Button, FlatList, StyleSheet, Text } from 'react-native';
 import { useRoute } from '@react-navigation/native';
+import { RadioButton } from 'react-native-paper';
 
 const TakeNoteScreen = () => {
   const [userNotes, setUserNotes] = useState([]);
   const [newNote, setNewNote] = useState('');
   const [selectedNote, setSelectedNote] = useState(null);
+  const [priority, setPriority] = useState('red');
   const route = useRoute();
 
   useEffect(() => {
@@ -32,7 +34,7 @@ const TakeNoteScreen = () => {
   const addNote = async () => {
     if (newNote.trim() !== '') {
       const userId = route.params.id;
-      const newNoteObject = { id: Date.now().toString(), title: newNote, completed: false, user_id: userId };
+      const newNoteObject = { id: Date.now().toString(), title: newNote, completed: false, user_id: userId, priority: priority };
 
       setUserNotes((prevNotes) => [...prevNotes, newNoteObject]);
 
@@ -55,12 +57,13 @@ const TakeNoteScreen = () => {
       }
 
       setNewNote('');
+      setPriority('red'); // Reset priority after adding a new note
     }
   };
 
   const updateNote = async () => {
     if (selectedNote && newNote.trim() !== '') {
-      const updatedNote = { ...selectedNote, title: newNote };
+      const updatedNote = { ...selectedNote, title: newNote, priority: priority };
 
       setUserNotes((prevNotes) =>
         prevNotes.map((note) => (note.id === selectedNote.id ? updatedNote : note))
@@ -86,6 +89,7 @@ const TakeNoteScreen = () => {
 
       setSelectedNote(null);
       setNewNote('');
+      setPriority('red'); // Reset priority after updating a note
     }
   };
 
@@ -110,6 +114,7 @@ const TakeNoteScreen = () => {
   const handleEdit = (note) => {
     setSelectedNote(note);
     setNewNote(note.title);
+    setPriority(note.priority);
   };
 
   return (
@@ -121,20 +126,50 @@ const TakeNoteScreen = () => {
           onChangeText={(text) => setNewNote(text)}
           value={newNote}
         />
+        <View style={styles.priorityRadioGroup}>
+          <Text>Priority:</Text>
+          <View style={styles.radioButtons}>
+            <RadioButton
+              value="red"
+              status={priority === 'red' ? 'checked' : 'unchecked'}
+              onPress={() => setPriority('red')}
+            />
+            <Text>Red</Text>
+          </View>
+          <View style={styles.radioButtons}>
+            <RadioButton
+              value="orange"
+              status={priority === 'orange' ? 'checked' : 'unchecked'}
+              onPress={() => setPriority('orange')}
+            />
+            <Text>Orange</Text>
+          </View>
+          <View style={styles.radioButtons}>
+            <RadioButton
+              value="green"
+              status={priority === 'green' ? 'checked' : 'unchecked'}
+              onPress={() => setPriority('green')}
+            />
+            <Text>Green</Text>
+          </View>
+        </View>
         <Button title={selectedNote ? 'Cập nhật' : 'Thêm'} onPress={selectedNote ? updateNote : addNote} />
       </View>
 
       <FlatList
-        data={userNotes}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.noteItem}>
-            <Text>{item.title}</Text>
-            <Button title="Sửa" onPress={() => handleEdit(item)} />
-            <Button title="Xóa" onPress={() => deleteNote(item.id)} />
-          </View>
-        )}
-      />
+  data={userNotes}
+  keyExtractor={(item) => item.id.toString()}
+  renderItem={({ item }) => (
+    <View style={styles.noteItemRow}>
+      <Text>{item.title}</Text>
+      <Text>Priority: {item.priority}</Text>
+      <View style={styles.buttonContainer}>
+        <Button title="Sửa" onPress={() => handleEdit(item)} />
+        <Button title="Xóa" onPress={() => deleteNote(item.id)} />
+      </View>
+    </View>
+  )}
+/>
     </View>
   );
 };
@@ -145,18 +180,36 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   inputContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     marginBottom: 10,
   },
   input: {
-    flex: 1,
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
-    marginRight: 10,
+    marginBottom: 10,
     paddingLeft: 10,
   },
+  priorityRadioGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  radioButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
   noteItem: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: '#eee',
+    borderRadius: 5,
+  },
+  noteItemRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -164,6 +217,9 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#eee',
     borderRadius: 5,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
   },
 });
 

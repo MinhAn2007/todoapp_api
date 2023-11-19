@@ -1,13 +1,45 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
-
+import { useNavigation } from '@react-navigation/native';
 const RegisterScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-
-  const handleRegister = () => {
-    console.log('Đăng ký với:', { username, password, email });
+  const [rePass, setRePass] = useState('');
+  const navigate = useNavigation();
+  const handleRegister = async () => {
+    if (username.trim() === '' || password.trim() === '' || rePass.trim() === '') {
+      alert('Please fill in all fields.');
+      return;
+    }
+  
+    if (password !== rePass) {
+      alert('Passwords do not match.');
+      return;
+    }
+  
+    const apiUrl = 'http://localhost:3000/users';
+  
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        }),
+      });
+  
+      if (response.ok) {
+        console.log('User registered successfully.');
+        navigate.navigate('Login');
+      } else {
+        console.error('Failed to register. Server returned:', response.status);
+      }
+    } catch (error) {
+      console.error('Error registering user:', error.message);
+    }
   };
 
   return (
@@ -27,9 +59,10 @@ const RegisterScreen = () => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Email"
-        onChangeText={text => setEmail(text)}
-        value={email}
+        placeholder="Nhập lại mật khẩu"
+        secureTextEntry
+        onChangeText={text => setRePass(text)}
+        value={rePass}
       />
       <Button title="Đăng ký" onPress={handleRegister} />
     </View>

@@ -9,6 +9,16 @@
       "id": 2,
       "password": "123",
       "username": "an"
+    },
+    {
+      "username": "minhan",
+      "password": "123",
+      "id": 3
+    },
+    {
+      "username": "teo",
+      "password": "123",
+      "id": 4
     }
   ],
   "note": [
@@ -16,19 +26,22 @@
       "id": 1,
       "title": "note1",
       "content": "content1",
-      "user_id": 1
+      "user_id": 1,
+      "priority": "orange"
     },
     {
       "id": 2,
       "title": "note2",
       "content": "content2",
-      "user_id": 1
+      "user_id": 1,
+      "priority": "red"
     },
     {
       "id": 3,
       "title": "note3",
       "content": "content3",
-      "user_id": 1
+      "user_id": 1,
+      "priority": "green"
     },
     {
       "id": "1700366141023",
@@ -40,7 +53,34 @@
       "id": "1700366564945",
       "title": "testUpdate",
       "completed": false,
-      "user_id": 1
+      "user_id": 1,
+      "priority": "green"
+    },
+    {
+      "id": "1700367094361",
+      "title": "minhan",
+      "completed": false,
+      "user_id": 3
+    },
+    {
+      "id": "1700367097795",
+      "title": "teo",
+      "completed": false,
+      "user_id": 3
+    },
+    {
+      "id": "1700367923709",
+      "title": "hoc bai",
+      "completed": false,
+      "user_id": 4,
+      "priority": "red"
+    },
+    {
+      "id": "1700367927552",
+      "title": "di choi ",
+      "completed": false,
+      "user_id": 4,
+      "priority": "red"
     }
   ]
 }
