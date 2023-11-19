@@ -2,21 +2,57 @@
   "users": [
     {
       "id": 1,
-      "username": "user1",
-      "password": "pass1",
-      "tasks": [
-        {"id": 1, "title": "Task 1 for User 1", "completed": false},
-        {"id": 2, "title": "Task 2 for User 1", "completed": true}
-      ]
+      "password": "123",
+      "username": "admin"
     },
     {
       "id": 2,
-      "username": "user2",
-      "password": "pass2",
-      "tasks": [
-        {"id": 1, "title": "Task 1 for User 2", "completed": false},
-        {"id": 2, "title": "Task 2 for User 2", "completed": false}
-      ]
+      "password": "123",
+      "username": "an"
+    }
+  ],
+  "note": [
+    {
+      "id": 1,
+      "title": "note1",
+      "content": "content1",
+      "user_id": 1
+    },
+    {
+      "id": 2,
+      "title": "note2",
+      "content": "content2",
+      "user_id": 1
+    },
+    {
+      "id": 3,
+      "title": "note3",
+      "content": "content3",
+      "user_id": 1
+    },
+    {
+      "id": "1700365951628",
+      "title": "ab",
+      "completed": false,
+      "userId": 1
+    },
+    {
+      "id": "1700365962582",
+      "title": "aaaaaa",
+      "completed": false,
+      "userId": 1
+    },
+    {
+      "id": "1700366141023",
+      "title": "ab",
+      "completed": false,
+      "userId": 1
+    },
+    {
+      "id": "1700366145386",
+      "title": "ádasda",
+      "completed": false,
+      "userId": 1
     }
   ]
 }

@@ -13,7 +13,7 @@ const LoginScreen = ({ navigation }) => {
       if (user) {
         console.log('Đăng nhập thành công:', user);
         alert('Đăng nhập thành công');
-        navigation.navigate('TakeNoteScreen', { userNotes: user.notes });
+        navigation.navigate('TakeNoteScreen', { id: user.id });
       } else {
         alert('Đăng nhập thất bại: Tài khoản không hợp lệ');
       }

@@ -1,44 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, Button, FlatList, StyleSheet, Text } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 
 const TakeNoteScreen = () => {
-  const route = useRoute();
-  const initialUserNotes = route.params?.userNotes || [];
-  console.log('initialUserNotes:', initialUserNotes);
-
-  const [userNotes, setUserNotes] = useState(initialUserNotes);
+  const [userNotes, setUserNotes] = useState([]);
   const [newNote, setNewNote] = useState('');
+  const route = useRoute();
+  console.log(route.params);
+  useEffect(() => {
+    fetchUserNotes(route.params);
+    console.log('useEffect');
+  }, [route.params]);
 
-  console.log('userNotes:', userNotes);
-
-  const addNote = () => {
-    if (newNote.trim() !== '') {
-      setUserNotes([...userNotes, { id: Date.now().toString(), text: newNote }]);
-      setNewNote('');
+  const fetchUserNotes = async (userId) => {
+    console.log(userId);
+    try {
+      const apiUrl = `http://localhost:3000/note?user_id=${userId.id}`;
+      console.log(apiUrl);
+      const response = await fetch(apiUrl);
+      
+      if (response.ok) {
+        const data = await response.json();
+        setUserNotes(data);  
+      } else {
+        console.error('Failed to fetch user notes. Server returned:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching user notes:', error.message);
     }
   };
 
+  const addNote = async  () => {
+    if (newNote.trim() !== '') {
+      const userId = route.params.id;
+      const newNoteObject = { id: Date.now().toString(), title: newNote, completed: false, userId: userId };
+  
+      setUserNotes((prevNotes) => [...prevNotes, newNoteObject]);
+  
+      const apiUrl = `http://localhost:3000/note`;
+  
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newNoteObject),
+        });
+  
+        if (!response.ok) {
+          console.error('Failed to add note. Server returned:', response.status);
+        }
+      } catch (error) {
+        console.error('Error adding note:', error.message);
+      }
+  
+      setNewNote('');
+    }
+  };
+  
+
   return (
     <View style={styles.container}>
-      {/* Input and Button */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
           placeholder="Nhập ghi chú mới"
-          onChangeText={text => setNewNote(text)}
+          onChangeText={(text) => setNewNote(text)}
           value={newNote}
         />
         <Button title="Thêm" onPress={addNote} />
       </View>
 
-      {/* FlatList */}
       <FlatList
         data={userNotes}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.noteItem}>
-            <Text>{item.text}</Text>
+            <Text>{item.title}</Text>
           </View>
         )}
       />
